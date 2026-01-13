@@ -9,30 +9,20 @@
         .card { background: #1c1c1e; padding: 30px 20px; border-radius: 24px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(255,255,255,0.1); }
         h1 { margin: 0 0 10px; font-size: 22px; }
         p { color: #8e8e93; margin-bottom: 25px; font-size: 15px; }
-        
         .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 16px 0; border-radius: 14px; font-weight: 600; font-size: 16px; text-decoration: none; margin-bottom: 12px; border: none; cursor: pointer; transition: 0.2s; }
         .btn:active { opacity: 0.8; transform: scale(0.98); }
-        
-        .btn-primary { background-color: #007aff; color: white; } /* Синяя */
-        .btn-secondary { background-color: #34c759; color: white; } /* Зеленая */
-        
+        .btn-primary { background-color: #007aff; color: white; }
+        .btn-secondary { background-color: #34c759; color: white; }
         .debug { font-size: 10px; color: #333; margin-top: 20px; word-break: break-all; }
     </style>
 </head>
 <body>
-
     <div class="card">
         <h1>Настройка Lue VPN</h1>
-        <p>Нажмите синюю кнопку, чтобы добавить подписку в приложение.</p>
-
-        <!-- Кнопка автоматического открытия -->
+        <p>Нажмите синюю кнопку. Приложение откроется и добавит подписку.</p>
         <a id="btn-open" href="#" class="btn btn-primary">🚀 Добавить в v2RayTun</a>
-        
-        <p style="font-size: 13px; margin: 15px 0 10px;">Если не открылось — скопируйте ключ:</p>
-
-        <!-- Кнопка копирования -->
-        <button id="btn-copy" class="btn btn-secondary" onclick="copyLink()">📋 Скопировать ключ</button>
-        
+        <p style="font-size: 13px; margin: 15px 0 10px;">Если не сработало — скопируйте ключ:</p>
+        <button id="btn-copy" class="btn btn-secondary" onclick="copyLink()">📋 Скопировать ссылку</button>
         <div id="debug-link" class="debug">...</div>
     </div>
 
@@ -43,23 +33,15 @@
         if (subLink) {
             document.getElementById('debug-link').innerText = "Ключ загружен";
             
-            // --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
-            // Используем схему v2raytun:// вместо v2rayng://
-            // Это заставит телефон открыть именно v2RayTun
-            const deepLink = "v2raytun://install-sub?url=" + encodeURIComponent(subLink) + "&name=LueVPN";
+            // --- ГЛАВНОЕ ИЗМЕНЕНИЕ ---
+            // Используем v2box://. v2RayTun понимает этот формат лучше всего.
+            const deepLink = "v2box://install-sub?url=" + encodeURIComponent(subLink) + "&name=LueVPN";
             
-            // Назначаем ссылку на кнопку
-            const btnOpen = document.getElementById('btn-open');
-            btnOpen.href = deepLink;
+            const btn = document.getElementById('btn-open');
+            btn.href = deepLink;
             
-            // Пытаемся открыть автоматически через 1 секунду
-            setTimeout(() => {
-                window.location.href = deepLink;
-            }, 1000);
-
-        } else {
-            document.querySelector('h1').innerText = "Ошибка";
-            document.querySelector('p').innerText = "Нет ссылки на подписку";
+            // Авто-открытие через 1 сек
+            setTimeout(() => { window.location.href = deepLink; }, 1000);
         }
 
         function copyLink() {
@@ -67,9 +49,10 @@
             navigator.clipboard.writeText(subLink).then(() => {
                 const btn = document.getElementById('btn-copy');
                 btn.innerText = "✅ Скопировано!";
-                setTimeout(() => { btn.innerText = "📋 Скопировать ключ"; }, 2000);
-            }).catch(err => {
-                alert("Ошибка копирования. Скопируйте вручную.");
+                // Важно: Теперь, когда у нас есть HTTPS, кнопка копирования 
+                // позволяет вставить ссылку в приложении через "Import from Clipboard" 
+                // и оно ПОКАЖЕТ статистику, так как ссылка теперь безопасная.
+                setTimeout(() => { btn.innerText = "📋 Скопировать ссылку"; }, 2000);
             });
         }
     </script>
