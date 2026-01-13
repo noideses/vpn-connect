@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lue VPN</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #000; color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .card { background: #1c1c1e; padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; }
+        h1 { font-size: 22px; margin-bottom: 20px; }
+        .btn { display: block; width: 100%; padding: 15px 0; border-radius: 12px; font-weight: bold; text-decoration: none; margin-bottom: 10px; font-size: 16px; border: none; cursor: pointer; }
+        .btn-copy { background: #34c759; color: white; }
+        .btn-open { background: #007aff; color: white; }
+        .info { font-size: 12px; color: #555; margin-top: 20px; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Настройка Lue VPN</h1>
+        
+        <a id="btn-app" href="#" class="btn btn-open">🚀 Добавить в v2RayTun</a>
+        <button class="btn btn-copy" onclick="copyKey()">📋 Скопировать ссылку</button>
+
+        <p id="msg" style="font-size: 14px; color: #aaa; margin-top: 15px;">Нажмите синюю кнопку. Если не сработало — скопируйте ссылку и вставьте в приложении.</p>
+        <div class="info" id="debug-link">...</div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const subLink = urlParams.get('sub');
+        
+        if (subLink) {
+            document.getElementById('debug-link').innerText = "Ключ получен";
+            
+            // Формируем ссылку для импорта
+            const deepLink = "v2rayng://install-sub?url=" + encodeURIComponent(subLink) + "&name=LueVPN";
+            
+            document.getElementById('btn-app').href = deepLink;
+        }
+
+        function copyKey() {
+            if (subLink) {
+                navigator.clipboard.writeText(subLink).then(() => {
+                    alert("Ссылка скопирована! Откройте v2RayTun и нажмите 'Import from Clipboard'");
+                });
+            }
+        }
+    </script>
+</body>
+</html>
