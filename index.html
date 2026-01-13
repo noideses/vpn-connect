@@ -3,50 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lue VPN</title>
+    <title>Connecting...</title>
     <style>
-        body { background-color: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .loader { border: 4px solid #333; border-top: 4px solid #007aff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        p { color: #888; font-size: 14px; }
-        /* Кнопка скрыта, появится только если авто-запуск не сработает */
-        #manual-btn { display: none; padding: 15px 30px; background: #007aff; color: white; text-decoration: none; border-radius: 10px; font-weight: bold; margin-top: 20px; }
+        /* Полностью черный фон, без отступов */
+        body { 
+            background-color: #000000; 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-family: -apple-system, system-ui, sans-serif;
+        }
+        
+        /* Ссылка скрыта и выглядит минималистично */
+        #fallback-btn { 
+            display: none; 
+            color: #007aff; 
+            text-decoration: none; 
+            font-size: 16px; 
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="loader"></div>
-    <p>Запуск Lue VPN...</p>
-
-    <!-- Запасная кнопка -->
-    <a id="manual-btn" href="#">Открыть вручную</a>
+    <!-- Эта кнопка появится только через 2 секунды, если ничего не произошло -->
+    <a id="fallback-btn" href="#">Открыть v2RayTun</a>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const subLink = urlParams.get('sub');
 
         if (subLink) {
-            // Формируем ссылку как у конкурента
+            // Формируем ссылку прямого импорта
             const deepLink = "v2raytun://import/" + subLink;
             
-            // Настраиваем кнопку на всякий случай
-            const btn = document.getElementById('manual-btn');
+            // Подготавливаем запасную кнопку
+            const btn = document.getElementById('fallback-btn');
             btn.href = deepLink;
 
-            // --- МАГИЯ АВТО-ЗАПУСКА ---
-            // Пытаемся открыть приложение сразу же при загрузке страницы
+            // === ГЛАВНОЕ ДЕЙСТВИЕ ===
+            // Моментальный редирект без ожидания
             window.location.href = deepLink;
 
-            // Если через 2 секунды мы все еще здесь (приложение не открылось)
-            // Показываем кнопку для ручного нажатия
+            // Страховка: если через 2.5 секунды пользователь все еще на странице
+            // (значит приложение не открылось), показываем кнопку
             setTimeout(() => {
-                document.querySelector('.loader').style.display = 'none';
-                document.querySelector('p').innerText = "Если приложение не открылось, нажмите кнопку:";
                 btn.style.display = 'block';
-            }, 2000);
-        } else {
-            document.querySelector('p').innerText = "Ошибка: ссылка не найдена";
-            document.querySelector('.loader').style.display = 'none';
+            }, 2500);
         }
     </script>
 </body>
