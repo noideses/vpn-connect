@@ -3,18 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lue VPN</title>
+    <title>Подключение VPN</title>
     <style>
-        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; text-align: center; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; text-align: center; }
         .card { background: #1c1c1e; padding: 30px 20px; border-radius: 24px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(255,255,255,0.1); }
         h1 { margin: 0 0 10px; font-size: 22px; }
         p { color: #8e8e93; margin-bottom: 25px; font-size: 15px; }
-        
         .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 16px 0; border-radius: 14px; font-weight: 600; font-size: 16px; text-decoration: none; margin-bottom: 12px; border: none; cursor: pointer; transition: 0.2s; }
-        .btn:active { opacity: 0.8; transform: scale(0.98); }
-        
         .btn-primary { background-color: #007aff; color: white; }
-        .btn-secondary { background-color: #34c759; color: white; }
         .debug { font-size: 10px; color: #333; margin-top: 20px; word-break: break-all; }
     </style>
 </head>
@@ -22,13 +18,10 @@
 
     <div class="card">
         <h1>Настройка Lue VPN</h1>
-        <p>Нажмите синюю кнопку. Приложение откроется и добавит подписку.</p>
+        <p>Нажмите кнопку ниже.</p>
 
-        <!-- Кнопка -->
+        <!-- Кнопка как у конкурентов -->
         <a id="btn-open" href="#" class="btn btn-primary">🚀 Добавить в v2RayTun</a>
-        
-        <p style="font-size: 13px; margin: 15px 0 10px;">Если не сработало — скопируйте ключ:</p>
-        <button id="btn-copy" class="btn btn-secondary" onclick="copyLink()">📋 Скопировать ссылку</button>
         
         <div id="debug-link" class="debug">...</div>
     </div>
@@ -38,39 +31,25 @@
         const subLink = urlParams.get('sub');
         
         if (subLink) {
-            document.getElementById('debug-link').innerText = "Ключ загружен";
+            document.getElementById('debug-link').innerText = "Готово к импорту";
             
-            // --- ВОЗВРАЩАЕМ РОДНУЮ СХЕМУ ---
-            // v2RayTun гарантированно реагирует на эту команду.
-            // Раньше она не работала из-за HTTP, теперь сработает.
+            // --- СЕКРЕТ КОНКУРЕНТА ---
+            // 1. Используем import/
+            // 2. НЕ КОДИРУЕМ ссылку (убираем encodeURIComponent)
+            // 3. Ссылка должна быть "сырой": v2raytun://import/https://...
+            
             const deepLink = "v2raytun://import/" + subLink;
             
-            // Назначаем кнопку
             const btn = document.getElementById('btn-open');
             btn.href = deepLink;
             
-            // Пробуем открыть автоматически через 1 сек
+            // Моментальное открытие
             setTimeout(() => {
                 window.location.href = deepLink;
-            }, 1000);
+            }, 500);
 
         } else {
             document.querySelector('h1').innerText = "Ошибка";
-            document.querySelector('p').innerText = "Нет ссылки";
-        }
-
-        function copyLink() {
-            if (!subLink) return;
-            navigator.clipboard.writeText(subLink).then(() => {
-                const btn = document.getElementById('btn-copy');
-                btn.innerText = "✅ Скопировано!";
-                // Если автоматика не сработала, при копировании мы тоже
-                // пробуем пнуть приложение, вдруг пользователь нажмет "Import from Clipboard"
-                setTimeout(() => { 
-                    btn.innerText = "📋 Скопировать ссылку"; 
-                    window.location.href = document.getElementById('btn-open').href;
-                }, 1500);
-            });
         }
     </script>
 </body>
